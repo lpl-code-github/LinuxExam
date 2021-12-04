@@ -32,7 +32,7 @@ public class DeleteServlet extends HttpServlet {
 
     // 执行删除方法
     Result delete = stuService.delete(id);
-    // 返回数据以json返回
+    // 返回数据以 json 返回
     Gson gson = new Gson();
     String json = gson.toJson(delete, Result.class);
 
