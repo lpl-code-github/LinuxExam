@@ -16,7 +16,7 @@ import java.io.PrintWriter;
 @WebServlet("/add")
 public class AddServlet extends HttpServlet {
   /**
-   * 解决post请求时，预检请求的跨域
+   *  解决post请求时，预检请求的跨域
    * @param request
    * @param response
    */
