@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>学生管理</title>
+		<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+		<!-- 引入样式 -->
+		<link rel="stylesheet" href="./plugins/elementui/index.css">
+		<link rel="stylesheet" href="./plugins/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" href="./css/style.css">
+	</head>
+
+	<body class="hold-transition">
+		<div id="app">
+			<div class="content-header">
+				<h1>学生管理</h1>
+			</div>
+
+			<div class="app-container">
+				<div class="box">
+					<!-- 查询 -->
+					<div class="filter-container">
+						<el-input placeholder="学生姓名" v-model="queryBy.name" style="width: 200px;" class="filter-item">
+						</el-input>
+						<el-input placeholder="学生专业" v-model="queryBy.major" style="width: 200px;" class="filter-item">
+						</el-input>
+						<el-button @click="getAll()" class="dalfBut">查询</el-button>
+						<el-button @click="clear()" class="dalfBut">重置查询</el-button>
+						<el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
+					</div>
+					<!-- 展示内容区域 -->
+					<el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
+						<el-table-column type="index" align="center" label="序号"></el-table-column>
+						<el-table-column prop="stuId" label="学号" align="center"></el-table-column>
+						<el-table-column prop="name" label="姓名" align="center"></el-table-column>
+						<el-table-column prop="age" label="年龄" align="center"></el-table-column>
+						<el-table-column prop="sex" label="性别" align="center"></el-table-column>
+						<el-table-column prop="major" label="专业" align="center"></el-table-column>
+						<el-table-column label="操作" align="center">
+							<!-- 操作按钮 -->
+							<template slot-scope="scope">
+								<el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
+								<el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+
+
+					<!-- 新增标签弹层 -->
+					<div class="add-form">
+						<el-dialog title="新增学生" :visible.sync="dialogFormVisible">
+							<el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="center"
+								label-width="100px">
+								<el-row>
+									<el-col :span="12">
+										<el-form-item label="姓名" prop="name">
+											<el-input v-model="formData.name" />
+										</el-form-item>
+									</el-col>
+									<el-col :span="12">
+										<el-form-item label="学号" prop="stuId">
+											<el-input v-model="formData.stuId" />
+										</el-form-item>
+									</el-col>
+									<el-col :span="12">
+										<el-form-item label="性别" prop="sex">
+											<el-input v-model="formData.sex" />
+										</el-form-item>
+									</el-col>
+									<el-col :span="12">
+										<el-form-item label="年龄" prop="age">
+											<el-input v-model="formData.age" />
+										</el-form-item>
+									</el-col>
+									<el-col :span="12">
+										<el-form-item label="专业" prop="major">
+											<el-input v-model="formData.major" />
+										</el-form-item>
+									</el-col>
+								</el-row>
+							</el-form>
+							<div slot="footer" class="dialog-footer">
+								<el-button @click="cancel()">取消</el-button>
+								<el-button type="primary" @click="handleAdd('dataAddForm')">确定</el-button>
+							</div>
+						</el-dialog>
+					</div>
+
+					<!-- 编辑标签弹层 -->
+					<div class="add-form">
+						<el-dialog title="编辑检查项" :visible.sync="dialogFormVisible4Edit">
+							<el-form ref="dataEditForm" :model="formData" :rules="rules" label-position="right"
+								label-width="100px">
+								<el-row>
+									<el-col :span="12">
+										<el-form-item label="姓名" prop="name">
+											<el-input v-model="formData.name" />
+										</el-form-item>
+									</el-col>
+									<el-col :span="12">
+										<el-form-item label="学号" prop="stuId">
+											<el-input v-model="formData.stuId" />
+										</el-form-item>
+									</el-col>
+									<el-col :span="12">
+										<el-form-item label="性别" prop="sex">
+											<el-input v-model="formData.sex" />
+										</el-form-item>
+									</el-col>
+									<el-col :span="12">
+										<el-form-item label="年龄" prop="age">
+											<el-input v-model="formData.age" />
+										</el-form-item>
+									</el-col>
+									<el-col :span="12">
+										<el-form-item label="专业" prop="major">
+											<el-input v-model="formData.major" />
+										</el-form-item>
+									</el-col>
+								</el-row>
+							</el-form>
+							<div slot="footer" class="dialog-footer">
+								<el-button @click="cancel()">取消</el-button>
+								<el-button type="primary" @click="handleEdit('dataEditForm')">确定</el-button>
+							</div>
+						</el-dialog>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</body>
+
+	<!-- vue2 -->
+	<script src="./js/vue.js"></script>
+	<!-- element -->
+	<script src="./plugins/elementui/index.js"></script>
+	<!-- jquery -->
+	<script type="text/javascript" src="./js/jquery.min.js"></script>
+	<!-- axios -->
+	<script src="./js/axios-0.18.0.js"></script>
+
+	<script>
+		var vue = new Vue({
+			el: '#app',
+			data: {
+				dataList: [], //当前页要展示的列表数据
+				dialogFormVisible: false, //添加表单是否可见
+				dialogFormVisible4Edit: false, //编辑表单是否可见
+				formData: {}, //表单数据
+				rules: { //校验规则
+					name: [{
+						required: true,
+						message: '姓名为必填项',
+						trigger: 'blur'
+					}],
+					stuId: [{
+						required: true,
+						message: '学号为必填项',
+						trigger: 'blur'
+					}],
+					sex: [{
+						required: true,
+						message: '性别为必填项',
+						trigger: 'blur'
+					}],
+					age: [{
+						required: true,
+						message: '年龄为必填项',
+						trigger: 'blur'
+					}],
+					major: [{
+						required: true,
+						message: '专业为必填项',
+						trigger: 'blur'
+					}],
+				},
+				queryBy: { //查询相关模型数据
+					id: "",
+					name: "",
+					major: ""
+				},
+			},
+
+			// 钩子函数，VUE对象初始化完成后自动执行
+			created() {
+				// 调用查询全部数据的操作
+				this.getAll();
+			},
+
+			methods: {
+				// 查询
+				getAll() {
+					axios.get("http://121.199.44.171:8080/stu/query", {
+						params: {
+							id: this.queryBy.id,
+							name: this.queryBy.name,
+							major: this.queryBy.major,
+						},
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					}).then((res) => {
+						this.dataList = res.data.data;
+					});
+
+				},
+
+				// 重置查询
+				clear() {
+					// 清空表单
+					this.queryBy.name = "";
+					this.queryBy.major = "";
+					// 重新加载数据
+					this.getAll();
+				},
+
+				// 弹出添加窗口
+				handleCreate() {
+					this.dialogFormVisible = true;
+					this.resetForm();
+				},
+
+				// 重置表单
+				resetForm() {
+					this.formData = {};
+				},
+
+				//  校验表单 添加
+				handleAdd(formName) {
+					this.$refs[formName].validate((valid) => {
+						if (valid) {
+							axios({
+								url: "http://121.199.44.171:8080/stu/add",
+								method: "post",
+								data: this.formData,
+								headers: {
+									'Content-Type': 'application/json;charset=utf-8',
+								},
+								changeOrigin: true,
+							}).then((res) => {
+								//判断当前操作是否成功
+								if (res.data.success) {
+									//1.关闭弹层
+									this.dialogFormVisible = false;
+									this.$message.success("添加成功");
+								} else {
+									this.$message.error("添加失败");
+								}
+							}).finally(() => {
+								//2.重新加载数据
+								this.getAll();
+							});
+						} else {
+							console.log('error submit!!');
+							return false;
+						}
+					});
+				},
+
+				// 取消
+				cancel() {
+					this.dialogFormVisible = false;
+					this.dialogFormVisible4Edit = false;
+					this.$message.info("当前操作取消");
+				},
+
+				// 删除
+				handleDelete(row) {
+					// console.log(row);
+					this.$confirm("此操作永久删除当前信息，是否继续？", "提示", {
+						type: "info"
+					}).then(() => {
+						axios({
+							url: "http://121.199.44.171:8080/stu/delete",
+							method: "get",
+							params: {
+								id: row.id
+							},
+							headers: {
+								'Content-Type': 'application/json',
+							},
+						}).then((res) => {
+							// console.log(res.data.success)
+							if (res.data.success) {
+								this.$message.success("删除成功");
+							} else {
+								this.$message.error("数据同步失败，自动刷新");
+							}
+						}).finally(() => {
+							//2.重新加载数据
+							this.getAll();
+						});
+					}).catch(() => {
+						this.$message.info("取消操作");
+					});
+				},
+
+				// 弹出编辑窗口
+				handleUpdate(row) {
+					axios({
+						url: "http://121.199.44.171:8080/stu/query",
+						method: "get",
+						params: {
+							id: row.id
+						},
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					}).then((res) => {
+						if (res.data != null) {
+							this.dialogFormVisible4Edit = true;
+							this.formData = res.data.data[0];
+
+						} else {
+							this.$message.error("数据同步失败，自动刷新");
+						}
+					})
+				},
+
+				// 校验表单 修改
+				handleEdit(formName) {
+					this.$refs[formName].validate((valid) => {
+						if (valid) {
+							axios({
+								url: "http://121.199.44.171:8080/stu/update",
+								method: "post",
+								data: this.formData,
+								headers: {
+									'Content-Type': 'application/json;charset=utf-8',
+								},
+							}).then((res) => {
+								//判断当前操作是否成功
+								if (res.data.success) {
+									//1.关闭弹层
+									this.dialogFormVisible4Edit = false;
+									this.$message.success("修改成功");
+								} else {
+									this.$message.error("修改失败");
+								}
+							}).finally(() => {
+								//2.重新加载数据
+								this.getAll();
+							});
+						} else {
+							console.log('error submit!!');
+							return false;
+						}
+					});
+				}
+			},
+		})
+	</script>
+
+</html>
