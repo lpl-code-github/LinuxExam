@@ -29,6 +29,7 @@
 						<el-button @click="clear()" class="dalfBut">重置查询</el-button>
 						<el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
 					</div>
+					
 					<!-- 展示内容区域 -->
 					<el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
 						<el-table-column type="index" align="center" label="序号"></el-table-column>
@@ -45,7 +46,6 @@
 							</template>
 						</el-table-column>
 					</el-table>
-
 
 					<!-- 新增标签弹层 -->
 					<div class="add-form">
@@ -244,9 +244,9 @@
 								if (res.data.success) {
 									//1.关闭弹层
 									this.dialogFormVisible = false;
-									this.$message.success("添加成功");
+									this.$message.success(this.data.message);
 								} else {
-									this.$message.error("添加失败");
+									this.$message.error(this.data.message);
 								}
 							}).finally(() => {
 								//2.重新加载数据
@@ -284,7 +284,7 @@
 						}).then((res) => {
 							// console.log(res.data.success)
 							if (res.data.success) {
-								this.$message.success("删除成功");
+								this.$message.success(this.data.message);
 							} else {
 								this.$message.error("数据同步失败，自动刷新");
 							}
@@ -335,9 +335,9 @@
 								if (res.data.success) {
 									//1.关闭弹层
 									this.dialogFormVisible4Edit = false;
-									this.$message.success("修改成功");
+									this.$message.success(this.data.message);
 								} else {
-									this.$message.error("修改失败");
+									this.$message.error(this.data.message);
 								}
 							}).finally(() => {
 								//2.重新加载数据
