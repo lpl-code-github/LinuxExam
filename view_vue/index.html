@@ -13,122 +13,129 @@
 
 	<body class="hold-transition">
 		<div id="app">
-			<div class="content-header">
-				<h1>学生管理</h1>
-			</div>
+			<div v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
+				element-loading-background="rgba(0, 0, 0, 0.8)" style="width: 100%;height: 100vh;">
+				<div class="content-header">
+					<h1>学生管理</h1>
+				</div>
 
-			<div class="app-container">
-				<div class="box">
-					<!-- 查询 -->
-					<div class="filter-container">
-						<el-input placeholder="学生姓名" v-model="queryBy.name" style="width: 200px;" class="filter-item">
-						</el-input>
-						<el-input placeholder="学生专业" v-model="queryBy.major" style="width: 200px;" class="filter-item">
-						</el-input>
-						<el-button @click="getAll()" class="dalfBut">查询</el-button>
-						<el-button @click="clear()" class="dalfBut">重置查询</el-button>
-						<el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
+				<div class="app-container">
+					<div class="box">
+						<!-- 查询 -->
+						<div class="filter-container">
+							<el-input placeholder="学生姓名" v-model="queryBy.name" style="width: 200px;"
+								class="filter-item">
+							</el-input>
+							<el-input placeholder="学生专业" v-model="queryBy.major" style="width: 200px;"
+								class="filter-item">
+							</el-input>
+							<el-button @click="getAll()" class="dalfBut">查询</el-button>
+							<el-button @click="clear()" class="dalfBut">重置查询</el-button>
+							<el-button type="primary" class="butT" @click="handleCreate()">新建</el-button>
+						</div>
+
+						<!-- 展示内容区域 -->
+						<el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
+							<el-table-column type="index" align="center" label="序号"></el-table-column>
+							<el-table-column prop="stuId" label="学号" align="center"></el-table-column>
+							<el-table-column prop="name" label="姓名" align="center"></el-table-column>
+							<el-table-column prop="age" label="年龄" align="center"></el-table-column>
+							<el-table-column prop="sex" label="性别" align="center"></el-table-column>
+							<el-table-column prop="major" label="专业" align="center"></el-table-column>
+							<el-table-column label="操作" align="center">
+								<!-- 操作按钮 -->
+								<template slot-scope="scope">
+									<el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑
+									</el-button>
+									<el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
+								</template>
+							</el-table-column>
+						</el-table>
+
+						<!-- 新增标签弹层 -->
+						<div class="add-form">
+							<el-dialog title="新增学生" :visible.sync="dialogFormVisible">
+								<el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="center"
+									label-width="100px">
+									<el-row>
+										<el-col :span="12">
+											<el-form-item label="姓名" prop="name">
+												<el-input v-model="formData.name" />
+											</el-form-item>
+										</el-col>
+										<el-col :span="12">
+											<el-form-item label="学号" prop="stuId">
+												<el-input v-model="formData.stuId" />
+											</el-form-item>
+										</el-col>
+										<el-col :span="12">
+											<el-form-item label="性别" prop="sex">
+												<el-input v-model="formData.sex" />
+											</el-form-item>
+										</el-col>
+										<el-col :span="12">
+											<el-form-item label="年龄" prop="age">
+												<el-input v-model="formData.age" />
+											</el-form-item>
+										</el-col>
+										<el-col :span="12">
+											<el-form-item label="专业" prop="major">
+												<el-input v-model="formData.major" />
+											</el-form-item>
+										</el-col>
+									</el-row>
+								</el-form>
+								<div slot="footer" class="dialog-footer">
+									<el-button @click="cancel()">取消</el-button>
+									<el-button type="primary" @click="handleAdd('dataAddForm')">确定</el-button>
+								</div>
+							</el-dialog>
+						</div>
+
+						<!-- 编辑标签弹层 -->
+						<div class="add-form">
+							<el-dialog title="编辑检查项" :visible.sync="dialogFormVisible4Edit">
+								<el-form ref="dataEditForm" :model="formData" :rules="rules" label-position="right"
+									label-width="100px">
+									<el-row>
+										<el-col :span="12">
+											<el-form-item label="姓名" prop="name">
+												<el-input v-model="formData.name" />
+											</el-form-item>
+										</el-col>
+										<el-col :span="12">
+											<el-form-item label="学号" prop="stuId">
+												<el-input v-model="formData.stuId" />
+											</el-form-item>
+										</el-col>
+										<el-col :span="12">
+											<el-form-item label="性别" prop="sex">
+												<el-input v-model="formData.sex" />
+											</el-form-item>
+										</el-col>
+										<el-col :span="12">
+											<el-form-item label="年龄" prop="age">
+												<el-input v-model="formData.age" />
+											</el-form-item>
+										</el-col>
+										<el-col :span="12">
+											<el-form-item label="专业" prop="major">
+												<el-input v-model="formData.major" />
+											</el-form-item>
+										</el-col>
+									</el-row>
+								</el-form>
+								<div slot="footer" class="dialog-footer">
+									<el-button @click="cancel()">取消</el-button>
+									<el-button type="primary" @click="handleEdit('dataEditForm')">确定</el-button>
+								</div>
+							</el-dialog>
+						</div>
+
 					</div>
-					
-					<!-- 展示内容区域 -->
-					<el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
-						<el-table-column type="index" align="center" label="序号"></el-table-column>
-						<el-table-column prop="stuId" label="学号" align="center"></el-table-column>
-						<el-table-column prop="name" label="姓名" align="center"></el-table-column>
-						<el-table-column prop="age" label="年龄" align="center"></el-table-column>
-						<el-table-column prop="sex" label="性别" align="center"></el-table-column>
-						<el-table-column prop="major" label="专业" align="center"></el-table-column>
-						<el-table-column label="操作" align="center">
-							<!-- 操作按钮 -->
-							<template slot-scope="scope">
-								<el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
-								<el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
-							</template>
-						</el-table-column>
-					</el-table>
-
-					<!-- 新增标签弹层 -->
-					<div class="add-form">
-						<el-dialog title="新增学生" :visible.sync="dialogFormVisible">
-							<el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="center"
-								label-width="100px">
-								<el-row>
-									<el-col :span="12">
-										<el-form-item label="姓名" prop="name">
-											<el-input v-model="formData.name" />
-										</el-form-item>
-									</el-col>
-									<el-col :span="12">
-										<el-form-item label="学号" prop="stuId">
-											<el-input v-model="formData.stuId" />
-										</el-form-item>
-									</el-col>
-									<el-col :span="12">
-										<el-form-item label="性别" prop="sex">
-											<el-input v-model="formData.sex" />
-										</el-form-item>
-									</el-col>
-									<el-col :span="12">
-										<el-form-item label="年龄" prop="age">
-											<el-input v-model="formData.age" />
-										</el-form-item>
-									</el-col>
-									<el-col :span="12">
-										<el-form-item label="专业" prop="major">
-											<el-input v-model="formData.major" />
-										</el-form-item>
-									</el-col>
-								</el-row>
-							</el-form>
-							<div slot="footer" class="dialog-footer">
-								<el-button @click="cancel()">取消</el-button>
-								<el-button type="primary" @click="handleAdd('dataAddForm')">确定</el-button>
-							</div>
-						</el-dialog>
-					</div>
-
-					<!-- 编辑标签弹层 -->
-					<div class="add-form">
-						<el-dialog title="编辑检查项" :visible.sync="dialogFormVisible4Edit">
-							<el-form ref="dataEditForm" :model="formData" :rules="rules" label-position="right"
-								label-width="100px">
-								<el-row>
-									<el-col :span="12">
-										<el-form-item label="姓名" prop="name">
-											<el-input v-model="formData.name" />
-										</el-form-item>
-									</el-col>
-									<el-col :span="12">
-										<el-form-item label="学号" prop="stuId">
-											<el-input v-model="formData.stuId" />
-										</el-form-item>
-									</el-col>
-									<el-col :span="12">
-										<el-form-item label="性别" prop="sex">
-											<el-input v-model="formData.sex" />
-										</el-form-item>
-									</el-col>
-									<el-col :span="12">
-										<el-form-item label="年龄" prop="age">
-											<el-input v-model="formData.age" />
-										</el-form-item>
-									</el-col>
-									<el-col :span="12">
-										<el-form-item label="专业" prop="major">
-											<el-input v-model="formData.major" />
-										</el-form-item>
-									</el-col>
-								</el-row>
-							</el-form>
-							<div slot="footer" class="dialog-footer">
-								<el-button @click="cancel()">取消</el-button>
-								<el-button type="primary" @click="handleEdit('dataEditForm')">确定</el-button>
-							</div>
-						</el-dialog>
-					</div>
-
 				</div>
 			</div>
+
 		</div>
 	</body>
 
@@ -181,6 +188,7 @@
 					name: "",
 					major: ""
 				},
+				loading: true,
 			},
 
 			// 钩子函数，VUE对象初始化完成后自动执行
@@ -192,7 +200,7 @@
 			methods: {
 				// 查询
 				getAll() {
-					axios.get("查询接口", {
+					axios.get("http://121.199.44.171:8080/stu/query", {
 						params: {
 							id: this.queryBy.id,
 							name: this.queryBy.name,
@@ -202,7 +210,14 @@
 							'Content-Type': 'application/json',
 						},
 					}).then((res) => {
-						this.dataList = res.data.data;
+						this.loading = true;
+						if (res.data.success) {
+							this.dataList = res.data.data;
+							// 关闭loding
+							this.loading = false;
+						}
+
+
 					});
 
 				},
@@ -232,7 +247,7 @@
 					this.$refs[formName].validate((valid) => {
 						if (valid) {
 							axios({
-								url: "添加接口",
+								url: "http://121.199.44.171:8080/stu/add",
 								method: "post",
 								data: this.formData,
 								headers: {
@@ -273,7 +288,7 @@
 						type: "info"
 					}).then(() => {
 						axios({
-							url: "删除接口",
+							url: "http://121.199.44.171:8080/stu/delete",
 							method: "get",
 							params: {
 								id: row.id
@@ -300,7 +315,7 @@
 				// 弹出编辑窗口
 				handleUpdate(row) {
 					axios({
-						url: "查询接口",
+						url: "http://121.199.44.171:8080/stu/query",
 						method: "get",
 						params: {
 							id: row.id
@@ -324,7 +339,7 @@
 					this.$refs[formName].validate((valid) => {
 						if (valid) {
 							axios({
-								url: "更新接口",
+								url: "http://121.199.44.171:8080/stu/update",
 								method: "post",
 								data: this.formData,
 								headers: {
