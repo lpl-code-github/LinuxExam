@@ -18,17 +18,17 @@ check_nginx(){
 }
 
 # 检查tomact是否正常
-check_tomact(){
+check_tomcat(){
   if [ $(ps -C java --no-header |wc -l) -eq 0 ];then
     # tomact尝试重启
    	/root/Student/tomcat-8081/bin/./startup.sh
 	  /root/Student/tomcat-8082/bin/./startup.sh
 	  /root/Student/tomcat-8083/bin/./startup.sh
     sleep 2
-    # 如果tomact启动失败
+    # 如果tomcat启动失败
     if [ $(ps -C java --no-header |wc -l) -eq 0 ];then
       # 告警信息写入load_log.txt 
-      echo "nginx尝试重启失败，已停止tomact集群，请上服务器检查" >> /root/Student/dingdingROBOT/log/load_log.txt
+      echo "tomcat尝试重启失败，已停止tomcat集群，请上服务器检查" >> /root/Student/dingdingROBOT/log/load_log.txt
       sleep 2
       # 调用发送方法
       send
@@ -82,7 +82,7 @@ send(){
 main(){
   # 检查服务
   check_nginx
-  check_tomact
+  check_tomcat
   # 监控负载
   get_info
 }
