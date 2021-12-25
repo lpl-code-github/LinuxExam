@@ -1,6 +1,48 @@
-# 1.  需求分析
+# 1.  课程设计要求
 
+## 1.1 课题要求
 
+ 设计并实现一套后端服务，可从以下主题中任选一个完成，也可以根据自己的兴趣爱好自选
+
+- 学生信息管理
+- 图书馆图书信息管理
+- 在线记事本…
+
+## 1.2 功能要求
+
+  后端服务需要包括四类接口：增、删、改、查。
+
+- 学生信息管理：需要至少包括增加学生信息、删除学生信息、查询学生信息、修改学生信息四个接口。
+
+- 图书馆图书信息管理：需要至少包括增加图书信息、删除图书信息、查询图书信息、修改图书信息四个接口。
+
+- 记事本：需要至少包括增加便笺、删除便笺、查询便笺、修改便笺四个接口。
+
+- 其它自选主题类似，需要至少包括增加、删除、修改、查询四个接口。
+
+## 1.3 代码要求
+
+- 使用Java语言进行设计开发
+
+- 使用Java Servlet来编写以上四个接口，不允许使用框架
+
+- 使用Java JDBC来访问数据库，不允许使用框架
+
+- 使用Jedis来访问Redis，不允许使用框架
+
+## 1.4 系统要求
+
+后端服务必须使用以下系统或者服务：
+
+- 每人一台独立的云主机，所有服务在其环境上部署运行
+
+- Linux系统版本：CentOS 7.x
+
+- Tomcat版本：Tomcat 8
+
+- MySQL版本：MySQL 5.7
+
+- Redis版本：Redis 3以上
 
 # 2. 系统分析
 
@@ -619,12 +661,12 @@ public class RedisUtil {
 ```
 
 ```java
-public class Result {
+public class Result<T> {
   private Boolean success;
   private String massage;
-  private Object data;
+  private T data;
 
-  public Result(Boolean success, String massage, Object data) {
+  public Result(Boolean success, String massage, T data) {
     this.success = success;
     this.massage = massage;
     this.data = data;
@@ -687,21 +729,15 @@ public void doPost(HttpServletRequest request, HttpServletResponse response)
 
 ### 2.3.1 数据库表设计
 
-
-
-### 2.3.2 数据库查询语句
+![image-20211225094022844](https://gitee.com/lplgitee/blog_img/raw/master/img/image-20211225094022844.png)
 
 
 
 # 3. 设计
 
-## 3.1 Redis缓存
+## 3.1 web集群+Nginx
 
-
-
-## 3.2 web集群+Nginx
-
-### 3.2.2 web集群
+### 3.1.1 web集群
 
 （1）使用tar命令解压apache-tomcat-8.5.72.tar.gz
 
@@ -734,7 +770,7 @@ cp -r tomact-8081 tomact-8083
 
 同样将新建的两个tomcat目录下的conf中的server.xml，将Connector port改为8082，8083，将Server port改为8006、8007
 
-### 3.2.1 Nginx反向代理及负载均衡
+### 3.1.2 Nginx反向代理及负载均衡
 
 （1）下载Nginx
 
@@ -1681,15 +1717,14 @@ public class RobotSend {
 
 ## 5.1 代码方面：
 
-- 前端没有做分页查询，以网页的形式流式查询不合适
+- 前端后端没有做分页查询，以网页的形式流式显示不合适
 
-- 插入时没有做字段校验，导致重复数据插入
+- 插入时没有做与数据库已有数据比对，会导致重复数据插入
 
-- 更新时没有做校验是否与原数据相同，导致浪费资源
+- 更新时没有做校验是否与原数据相同，导致浪费资源（造成后端服务压力）
 
-- 查询接口
+  （不过只是一个小demo，此次考查重点不在于代码）
 
-  （不过只是一个小demo，此次考查重点不在于项目）
 
 ## 5.2 shell脚本
 
