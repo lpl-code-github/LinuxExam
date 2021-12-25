@@ -729,7 +729,7 @@ public void doPost(HttpServletRequest request, HttpServletResponse response)
 
 ### 2.3.1 数据库表设计
 
-![image-20211225094022844](https://gitee.com/lplgitee/blog_img/raw/master/img/image-20211225094022844.png)
+![image-20211225112013934](https://gitee.com/lplgitee/blog_img/raw/master/img/image-20211225112013934.png)
 
 
 
